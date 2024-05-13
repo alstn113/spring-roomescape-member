@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import roomescape.config.TestConfig;
 import roomescape.dto.request.LoginRequest;
 import roomescape.security.JwtTokenProvider;
+import roomescape.security.TokenProvider;
 
 @SpringBootTest(
         classes = TestConfig.class,
@@ -31,7 +32,7 @@ public abstract class BaseControllerTest {
     private int port;
 
     @SpyBean
-    protected JwtTokenProvider jwtTokenProvider;
+    protected TokenProvider tokenProvider;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

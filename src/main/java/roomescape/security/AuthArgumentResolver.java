@@ -15,12 +15,11 @@ import roomescape.util.CookieUtil;
 public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final MemberService memberService;
+    private final TokenProvider tokenProvider;
 
-    private final JwtTokenProvider jwtTokenProvider;
-
-    public AuthArgumentResolver(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+    public AuthArgumentResolver(MemberService memberService, TokenProvider tokenProvider) {
         this.memberService = memberService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -35,13 +34,10 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory
     ) {
-        String token = CookieUtil.extractTokenFromCookie(webRequest);
+        String token = CookieUtil.extractTokenFromCookie(webRequest)
+                .orElseThrow(UnauthorizedException::new);
 
-        if (token == null) {
-            throw new UnauthorizedException();
-        }
-
-        Long id = jwtTokenProvider.getMemberId(token);
+        Long id = tokenProvider.getMemberId(token);
         MemberResponse memberResponse = memberService.getById(id);
 
         return new Accessor(

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JwtTokenProvider {
+public class JwtTokenProvider implements TokenProvider {
 
     private final SecretKey secretKey;
     private final long expirationTime;
@@ -27,6 +27,7 @@ public class JwtTokenProvider {
         this.expirationTime = expirationTime;
     }
 
+    @Override
     public String createToken(String memberId) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + expirationTime);
@@ -39,6 +40,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    @Override
     public Long getMemberId(String token) {
         Claims claims = toClaims(token);
 

@@ -41,11 +41,8 @@ public class AuthController {
 
     @GetMapping("/login/check")
     public ResponseEntity<MemberResponse> checkLogin(HttpServletRequest request) {
-        String token = CookieUtil.extractTokenFromCookie(request);
-
-        if (token == null) {
-            throw new UnauthorizedException();
-        }
+        String token = CookieUtil.extractTokenFromCookie(request)
+                .orElseThrow(UnauthorizedException::new);
 
         Long id = authService.getMemberIdByToken(token);
         MemberResponse memberResponse = memberService.getById(id);

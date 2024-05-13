@@ -19,6 +19,7 @@ import roomescape.dto.request.LoginRequest;
 import roomescape.dto.request.SignupRequest;
 import roomescape.dto.response.MemberResponse;
 import roomescape.security.JwtTokenProvider;
+import roomescape.security.TokenProvider;
 
 @SpringBootTest(classes = TestConfig.class)
 @Transactional
@@ -35,7 +36,7 @@ class AuthServiceTest {
     private MemberService memberService;
 
     @SpyBean
-    private JwtTokenProvider jwtTokenProvider;
+    private TokenProvider tokenProvider;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +47,7 @@ class AuthServiceTest {
     @Test
     @DisplayName("토큰을 생성한다.")
     void createToken() {
-        doReturn("created_token").when(jwtTokenProvider).createToken(any());
+        doReturn("created_token").when(tokenProvider).createToken(any());
 
         String token = authService.createToken(1L);
 
@@ -82,7 +83,7 @@ class AuthServiceTest {
     @Test
     @DisplayName("토큰으로 회원 아이디를 가져올 수 있다.")
     void getMemberId() {
-        doReturn(1L).when(jwtTokenProvider).getMemberId(any());
+        doReturn(1L).when(tokenProvider).getMemberId(any());
 
         Long memberId = authService.getMemberIdByToken("token");
 

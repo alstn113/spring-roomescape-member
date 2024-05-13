@@ -15,11 +15,11 @@ import roomescape.util.CookieUtil;
 public class AuthInterceptor implements HandlerInterceptor {
 
     private final MemberService memberService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenProvider tokenProvider;
 
-    public AuthInterceptor(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+    public AuthInterceptor(MemberService memberService, TokenProvider tokenProvider) {
         this.memberService = memberService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -28,13 +28,10 @@ public class AuthInterceptor implements HandlerInterceptor {
             HttpServletResponse response,
             Object handler
     ) {
-        String token = CookieUtil.extractTokenFromCookie(request);
+        String token = CookieUtil.extractTokenFromCookie(request)
+                .orElseThrow(UnauthorizedException::new);
 
-        if (token == null) {
-            throw new UnauthorizedException();
-        }
-
-        Long memberId = jwtTokenProvider.getMemberId(token);
+        Long memberId = tokenProvider.getMemberId(token);
         MemberResponse memberResponse = memberService.getById(memberId);
 
         if (memberResponse.role() != Role.ADMIN) {

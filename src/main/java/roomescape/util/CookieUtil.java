@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Optional;
 import org.springframework.web.context.request.NativeWebRequest;
 
 public class CookieUtil {
@@ -32,25 +33,24 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
-    public static String extractTokenFromCookie(HttpServletRequest request) {
+    public static Optional<String> extractTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
-            return null;
+            return Optional.empty();
         }
 
         return Arrays.stream(cookies)
                 .filter(cookie -> TOKEN.equals(cookie.getName()))
                 .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
-    public static String extractTokenFromCookie(NativeWebRequest webRequest) {
+    public static Optional<String> extractTokenFromCookie(NativeWebRequest webRequest) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
         if (request == null) {
-            return null;
+            return Optional.empty();
         }
 
         return extractTokenFromCookie(request);

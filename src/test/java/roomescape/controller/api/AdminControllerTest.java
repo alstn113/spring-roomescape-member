@@ -66,7 +66,7 @@ class AdminControllerTest extends BaseControllerTest {
                 LocalDate.of(2024, 6, 22),
                 1L,
                 1L,
-                1L
+                ADMIN_ID
         );
 
         ExtractableResponse<Response> response = RestAssured.given().log().all()
