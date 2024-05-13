@@ -47,7 +47,11 @@ public class CookieUtil {
     }
 
     public static String extractTokenFromCookie(NativeWebRequest webRequest) {
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+
+        if (request == null) {
+            return null;
+        }
 
         return extractTokenFromCookie(request);
     }
